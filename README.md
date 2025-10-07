@@ -95,3 +95,17 @@ To learn more about React Native, take a look at the following resources:
 - [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+
+
+
+## Features
+- Fetch 10 users from RandomUser API
+- Smooth swipe gestures (left/right) using Reanimated + Gesture Handler
+- Persist likes/dislikes to AsyncStorage
+- Resume where left off on restart
+- Summary screen + Restart button
+
+## Design Notes
+I chose `react-native-reanimated` + `react-native-gesture-handler` because Reanimated runs animations on the UI thread, which gives smooth, jank-free springs for the swipe-off behaviour. The `useAnimatedGestureHandler` + `withSpring` / `withTiming` combination provides both natural releasing-to-center and the quick fly-off animation when the swipe crosses a threshold.
+
+I split concerns into a `useUsers` hook (fetch/cache/persist) and pure UI components (`Card`, `Deck`). This keeps networking and storage logic testable and separate from animation logic. `useUsers` persists every swipe to AsyncStorage and exposes a `restart()` method that clears storage and refetches users. Trade-offs: I cache fetched users in storage to avoid refetching if the app restarts quickly; for a production app you'd want cache invalidation or pagination (infinite deck).
